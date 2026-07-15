@@ -1,0 +1,27 @@
+{
+  "name": "projet-8-admin-leads",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Kit admin React — dashboard branché sur le backend leads (projet 7) : leads, sites clients, clés API. Boilerplate réutilisable pour tout futur SaaS.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test tests/api.test.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.101.2",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.1"
+  }
+}
