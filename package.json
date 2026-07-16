@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test tests/api.test.ts",
+    "test": "node --test tests/api.test.ts tests/reponses-avis.test.ts",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

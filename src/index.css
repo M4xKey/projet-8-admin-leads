@@ -363,3 +363,80 @@ label {
 }
 .planning-ajout-fermeture input { width: auto; flex: 0 1 auto; }
 .planning-ajout-fermeture input[type="text"] { flex: 1; min-width: 160px; }
+
+/* --- Onglet Service : feuille de service du jour (projet 9 v2, E5) -------------- */
+.service-feuille {
+  background: var(--surface);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  padding: 1.25rem 1.5rem;
+}
+
+.service-entete h2 { margin: 0 0 0.25rem; font-size: 1.15rem; }
+.service-entete p { margin: 0 0 1rem; color: var(--texte-2); }
+
+.service-creneau { border-top: 1px solid var(--bordure); padding: 0.6rem 0; }
+.service-creneau h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+.service-total { font-size: 0.8rem; font-weight: 400; color: var(--texte-2); }
+
+.service-creneau ul { list-style: none; margin: 0; padding: 0; }
+.service-creneau li { padding: 0.2rem 0; }
+.service-attente { color: var(--texte-2); }
+
+/* À l'impression : seule la feuille de service, sur fond blanc. */
+@media print {
+  .app-header,
+  .service-filtres,
+  .toasts { display: none !important; }
+  body { background: #fff; }
+  .app-contenu { max-width: none; margin: 0; padding: 0; }
+  .service-feuille { box-shadow: none; border-radius: 0; padding: 0; }
+}
+
+/* --- Présence locale v2 : graphique d'avis, checklist, contenu ------------------ */
+.graphique-avis { width: 100%; height: auto; display: block; }
+.graphique-repere { stroke: var(--bordure); stroke-width: 1; }
+.graphique-texte { fill: var(--texte-2); font-size: 10px; }
+.graphique-barre { fill: var(--accent); opacity: 0.25; }
+.graphique-ligne { fill: none; stroke: var(--accent); stroke-width: 2; }
+.graphique-point { fill: var(--accent); }
+
+.checklist-score {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-left: 0.5rem;
+}
+
+.checklist-liste { list-style: none; margin: 0; padding: 0; }
+.checklist-liste li { padding: 0.25rem 0; }
+.checklist-liste label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+.checklist-liste input[type="checkbox"] { width: auto; }
+
+.reponses-avis-controles { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.reponses-avis-controles select,
+.reponses-avis-controles input { width: auto; flex: 1; min-width: 140px; }
+
+.contenu-liste, .contenu-idees { list-style: none; margin: 0 0 0.75rem; padding: 0; }
+.contenu-liste li, .contenu-idees li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--bordure);
+}
+.contenu-liste label { display: flex; align-items: center; gap: 0.5rem; flex: 1; cursor: pointer; }
+.contenu-liste input[type="checkbox"] { width: auto; }
+.contenu-idees .contenu-titre { flex: 1; }
+.contenu-titre { flex: 1; }
+.contenu-publie .contenu-titre { text-decoration: line-through; color: var(--texte-2); }
+
+.contenu-ajout { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.contenu-ajout select { width: auto; }
+.contenu-ajout input[type="text"] { flex: 1; min-width: 200px; }

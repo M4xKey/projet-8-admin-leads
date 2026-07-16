@@ -211,3 +211,53 @@ test("ajouterFermeture / supprimerFermeture : POST puis DELETE", async () => {
   assert.equal(appels[1].url, "http://api.test/planning/1/fermetures/9");
   assert.equal(appels[1].init.method, "DELETE");
 });
+
+test("listerDemandes : le filtre jour passe dans la query (vue service)", async () => {
+  const { impl, appels } = fauxFetch(200, { donnees: [], page: 1, limit: 100, total: 0, totalPages: 1 });
+  const { listerDemandes } = await import("../src/api/endpoints.ts");
+  await listerDemandes({ siteId: 2, jour: "2026-07-18", limit: 100 }, { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[0].url, "http://api.test/demandes?siteId=2&jour=2026-07-18&limit=100");
+});
+
+// ============================== présence locale v2 ================================
+test("listerContenus / creerContenu / modifierContenu : bonnes routes et corps", async () => {
+  const { impl, appels } = fauxFetch(200, []);
+  const { listerContenus, creerContenu, modifierContenu, supprimerContenu } = await import(
+    "../src/api/endpoints.ts"
+  );
+  await listerContenus(1, "2026-08", { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[0].url, "http://api.test/contenus?siteId=1&mois=2026-08");
+
+  await creerContenu(
+    { siteId: 1, mois: "2026-08", titre: "Post GBP", canal: "gbp" },
+    { ...BASE, fetchImpl: impl, token: "t" }
+  );
+  assert.equal(appels[1].url, "http://api.test/contenus");
+  assert.equal(appels[1].init.method, "POST");
+
+  await modifierContenu(7, { statut: "publie" }, { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[2].url, "http://api.test/contenus/7");
+  assert.equal(appels[2].init.body, JSON.stringify({ statut: "publie" }));
+
+  await supprimerContenu(7, { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[3].init.method, "DELETE");
+});
+
+test("ideesContenus / checklist / relevés d'avis : bonnes routes", async () => {
+  const { impl, appels } = fauxFetch(200, { mois: "2026-08", actions: [] });
+  const { ideesContenus, obtenirChecklist, cocherChecklist, listerRelevesAvis } = await import(
+    "../src/api/endpoints.ts"
+  );
+  await ideesContenus("2026-08", { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[0].url, "http://api.test/contenus/idees?mois=2026-08");
+
+  await obtenirChecklist(1, "2026-08", { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[1].url, "http://api.test/checklist/1?mois=2026-08");
+
+  await cocherChecklist(1, { mois: "2026-08", cle: "photos", fait: true }, { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[2].init.method, "PUT");
+  assert.equal(appels[2].init.body, JSON.stringify({ mois: "2026-08", cle: "photos", fait: true }));
+
+  await listerRelevesAvis(1, { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[3].url, "http://api.test/stats/avis/1");
+});

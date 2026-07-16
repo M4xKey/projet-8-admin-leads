@@ -8,10 +8,12 @@ import LeadsView from "./components/LeadsView.tsx";
 import SitesView from "./components/SitesView.tsx";
 import DemandesView from "./components/DemandesView.tsx";
 import PlanningView from "./components/PlanningView.tsx";
+import ServiceView from "./components/ServiceView.tsx";
 import SuiviView from "./components/SuiviView.tsx";
+import ContenuView from "./components/ContenuView.tsx";
 import Toasts from "./components/Toasts.tsx";
 
-type Vue = "leads" | "demandes" | "planning" | "suivi" | "sites";
+type Vue = "leads" | "demandes" | "service" | "planning" | "suivi" | "contenu" | "sites";
 
 function App() {
   const { user, logout } = useAuth();
@@ -48,6 +50,13 @@ function App() {
             </button>
             <button
               type="button"
+              className={vue === "service" ? "actif" : ""}
+              onClick={() => setVue("service")}
+            >
+              Service
+            </button>
+            <button
+              type="button"
               className={vue === "planning" ? "actif" : ""}
               onClick={() => setVue("planning")}
             >
@@ -59,6 +68,13 @@ function App() {
               onClick={() => setVue("suivi")}
             >
               Suivi
+            </button>
+            <button
+              type="button"
+              className={vue === "contenu" ? "actif" : ""}
+              onClick={() => setVue("contenu")}
+            >
+              Contenu
             </button>
             <button
               type="button"
@@ -82,10 +98,14 @@ function App() {
           <LeadsView />
         ) : vue === "demandes" ? (
           <DemandesView />
+        ) : vue === "service" ? (
+          <ServiceView />
         ) : vue === "planning" ? (
           <PlanningView />
         ) : vue === "suivi" ? (
           <SuiviView />
+        ) : vue === "contenu" ? (
+          <ContenuView />
         ) : (
           <SitesView />
         )}

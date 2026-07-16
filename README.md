@@ -26,7 +26,7 @@ Prérequis : le backend (projet 7) doit tourner — `3-demarrer.bat` dans son do
 | `src/store/useToastStore.ts` | Notifications globales sans props — `toast("message", "succes"/"erreur")` appelable partout, même hors composants. |
 | `src/hooks/useDebounce.ts` | Le hook de l'exercice D1 du cahier, en version de référence. |
 
-`npm test` = 20 tests `node:test` sur le client API (aucun framework de test à installer). Les vues React, elles, se valident visuellement + par le type-check et le build.
+`npm test` = 27 tests `node:test` sur le client API (aucun framework de test à installer). Les vues React, elles, se valident visuellement + par le type-check et le build.
 
 ## Choix assumés
 

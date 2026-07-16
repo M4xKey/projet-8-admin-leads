@@ -4,9 +4,18 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { listerSites, obtenirRapport, envoyerRapport, releverAvis } from "../api/endpoints.ts";
+import {
+  listerSites,
+  obtenirRapport,
+  envoyerRapport,
+  releverAvis,
+  listerRelevesAvis,
+} from "../api/endpoints.ts";
 import { useAuth } from "../context/AuthContext.tsx";
 import { toast } from "../store/useToastStore.ts";
+import GraphiqueAvis from "./GraphiqueAvis.tsx";
+import ChecklistGbp from "./ChecklistGbp.tsx";
+import ReponsesAvis from "./ReponsesAvis.tsx";
 
 /** Mois courant "YYYY-MM" (heure locale du navigateur). */
 function moisCourant(): string {
@@ -34,6 +43,13 @@ function SuiviView() {
     enabled: siteId !== "" && /^\d{4}-\d{2}$/.test(mois),
   });
 
+  // Historique complet des relevés d'avis (graphique d'évolution, v2)
+  const { data: releves = [] } = useQuery({
+    queryKey: ["releves-avis", siteId],
+    queryFn: () => listerRelevesAvis(siteId as number, { token }),
+    enabled: siteId !== "",
+  });
+
   function surErreur(e: Error) {
     gererErreurSession(e);
     toast(e.message, "erreur");
@@ -54,6 +70,7 @@ function SuiviView() {
     mutationFn: () => releverAvis(siteId as number, { note: Number(note), nbAvis: Number(nbAvis) }, { token }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rapport"] });
+      queryClient.invalidateQueries({ queryKey: ["releves-avis"] }); // le graphique suit
       setNote("");
       setNbAvis("");
       toast("Relevé d'avis enregistré");
@@ -135,7 +152,15 @@ function SuiviView() {
             </div>
           </div>
 
+          <div className="carte">
+            <h2>Évolution des avis Google</h2>
+            <GraphiqueAvis releves={releves} />
+          </div>
+
           <div className="suivi-actions">
+            <ChecklistGbp siteId={siteId as number} mois={mois} />
+            {/* key : changer de site réinitialise le texte généré */}
+            <ReponsesAvis key={rapport.site.id} etablissement={rapport.site.nom} />
             <form className="carte form-releve" onSubmit={handleReleve}>
               <h2>Relevé d'avis Google</h2>
               <p className="aide">

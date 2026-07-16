@@ -2,12 +2,16 @@
 // Chaque fonction accepte `options` pour l'injection (tests) : token, fetchImpl, baseUrl.
 import { appelApi, queryString, type OptionsAppel } from "./client.ts";
 import type {
+  ActionChecklist,
+  Contenu,
   Demande,
   Fermeture,
+  IdeeContenu,
   Lead,
   Plage,
   Planning,
   Rapport,
+  ReleveAvis,
   ReponsePaginee,
   Site,
   SiteCree,
@@ -65,7 +69,14 @@ export function marquerLu(leadId: number, lu: boolean, options: Options = {}) {
 
 // --- Demandes de réservation (widget projet 9) ---------------------------------
 export function listerDemandes(
-  filtres: { page?: number; limit?: number; statut?: string; siteId?: number | "" },
+  filtres: {
+    page?: number;
+    limit?: number;
+    statut?: string;
+    siteId?: number | "";
+    /** "YYYY-MM-DD" (heure de Paris) — vue "service du jour", tri chronologique. */
+    jour?: string;
+  },
   options: Options = {}
 ) {
   return appelApi<ReponsePaginee<Demande>>(`/demandes${queryString(filtres)}`, options);
@@ -131,6 +142,59 @@ export function envoyerRapport(siteId: number, mois: string, options: Options = 
     `/stats/rapport/${siteId}/envoyer${queryString({ mois })}`,
     { ...options, method: "POST" }
   );
+}
+
+/** Historique des relevés d'avis (graphique d'évolution, présence locale v2). */
+export function listerRelevesAvis(siteId: number, options: Options = {}) {
+  return appelApi<ReleveAvis[]>(`/stats/avis/${siteId}`, options);
+}
+
+// --- Planning de contenu (présence locale v2) --------------------------------------
+export function listerContenus(siteId: number, mois: string, options: Options = {}) {
+  return appelApi<Contenu[]>(`/contenus${queryString({ siteId, mois })}`, options);
+}
+
+export function ideesContenus(mois: string, options: Options = {}) {
+  return appelApi<IdeeContenu[]>(`/contenus/idees${queryString({ mois })}`, options);
+}
+
+export function creerContenu(
+  donnees: { siteId: number; mois: string; titre: string; canal: Contenu["canal"]; description?: string },
+  options: Options = {}
+) {
+  return appelApi<Contenu>("/contenus", { ...options, method: "POST", corps: donnees });
+}
+
+export function modifierContenu(
+  contenuId: number,
+  donnees: { statut?: Contenu["statut"]; titre?: string; description?: string | null },
+  options: Options = {}
+) {
+  return appelApi<Contenu>(`/contenus/${contenuId}`, { ...options, method: "PATCH", corps: donnees });
+}
+
+export function supprimerContenu(contenuId: number, options: Options = {}) {
+  return appelApi<{ message: string }>(`/contenus/${contenuId}`, { ...options, method: "DELETE" });
+}
+
+// --- Checklist GBP mensuelle (présence locale v2) -----------------------------------
+export function obtenirChecklist(siteId: number, mois: string, options: Options = {}) {
+  return appelApi<{ mois: string; actions: ActionChecklist[] }>(
+    `/checklist/${siteId}${queryString({ mois })}`,
+    options
+  );
+}
+
+export function cocherChecklist(
+  siteId: number,
+  coche: { mois: string; cle: string; fait: boolean },
+  options: Options = {}
+) {
+  return appelApi<{ mois: string; actions: ActionChecklist[] }>(`/checklist/${siteId}`, {
+    ...options,
+    method: "PUT",
+    corps: coche,
+  });
 }
 
 export function releverAvis(

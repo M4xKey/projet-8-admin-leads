@@ -52,7 +52,7 @@ export interface Demande {
   site: { id: number; nom: string };
 }
 
-/** Rapport mensuel de présence locale (projet 10). */
+/** Rapport mensuel de présence locale (projet 10, enrichi v2). */
 export interface Rapport {
   site: { id: number; nom: string; domaine: string };
   mois: string; // "YYYY-MM"
@@ -63,8 +63,46 @@ export interface Rapport {
     nbLeads: number;
     nbDemandes: number;
     avis: { note: number; nbAvis: number; nouveauxAvis: number | null } | null;
+    /** Posts publiés dans le mois (présence locale v2) — null sur un vieux backend. */
+    nbContenusPublies?: number | null;
+    /** Score checklist GBP du mois (présence locale v2). */
+    checklist?: { faites: number; total: number } | null;
   };
   vues: { jour: string; compteur: number }[];
+}
+
+/** Un contenu du calendrier éditorial (présence locale v2). */
+export interface Contenu {
+  id: number;
+  mois: string; // "YYYY-MM"
+  titre: string;
+  description: string | null;
+  canal: "gbp" | "reseaux" | "site";
+  statut: "a_faire" | "publie" | "abandonne";
+  publieLe: string | null;
+  createdAt: string;
+}
+
+/** Une idée suggérée par la banque saisonnière. */
+export interface IdeeContenu {
+  canal: Contenu["canal"];
+  titre: string;
+}
+
+/** Une action de la checklist GBP mensuelle, avec son état pour le mois. */
+export interface ActionChecklist {
+  cle: string;
+  libelle: string;
+  description: string;
+  fait: boolean;
+}
+
+/** Un relevé d'avis Google (historique pour le graphique). */
+export interface ReleveAvis {
+  id: number;
+  note: number;
+  nbAvis: number;
+  createdAt: string;
 }
 
 /** Une plage d'ouverture hebdomadaire du planning de réservation (projet 9 v2). */
