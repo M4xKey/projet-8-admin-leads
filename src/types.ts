@@ -36,7 +36,7 @@ export interface Lead {
 /** Une demande de réservation reçue via le widget (projet 9). */
 export interface Demande {
   id: number;
-  type: "hebergement" | "restaurant";
+  type: "hebergement" | "restaurant" | "rdv";
   statut: "en_attente" | "confirmee" | "refusee";
   /** Statut calculé par le backend : ajoute "expiree" si en attente et date passée. */
   statutEffectif: "en_attente" | "confirmee" | "refusee" | "expiree";
@@ -65,6 +65,32 @@ export interface Rapport {
     avis: { note: number; nbAvis: number; nouveauxAvis: number | null } | null;
   };
   vues: { jour: string; compteur: number }[];
+}
+
+/** Une plage d'ouverture hebdomadaire du planning de réservation (projet 9 v2). */
+export interface Plage {
+  id?: number; // absent sur une plage en cours de création dans l'éditeur
+  jourSemaine: number; // 0 = dimanche ... 6 = samedi
+  heureDebut: string; // "12:00" (heure de Paris)
+  heureFin: string; // "14:00"
+  pasMinutes: number;
+  capacite: number;
+  mode: "restaurant" | "rdv";
+  libelle: string | null;
+}
+
+/** Une fermeture exceptionnelle (aucun créneau ce jour-là). */
+export interface Fermeture {
+  id: number;
+  jour: string; // "2026-08-15"
+  motif: string | null;
+}
+
+/** Réponse de GET /planning/:siteId — tout l'onglet Planning en un appel. */
+export interface Planning {
+  site: { id: number; nom: string; blocageMinutes: number };
+  plages: Plage[];
+  fermetures: Fermeture[];
 }
 
 /** Enveloppe standard des listes paginées du backend (lib pagination). */

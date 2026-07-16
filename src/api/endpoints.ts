@@ -1,7 +1,17 @@
 // Endpoints typés du backend leads — une fonction par route, zéro logique.
 // Chaque fonction accepte `options` pour l'injection (tests) : token, fetchImpl, baseUrl.
 import { appelApi, queryString, type OptionsAppel } from "./client.ts";
-import type { Demande, Lead, Rapport, ReponsePaginee, Site, SiteCree } from "../types.ts";
+import type {
+  Demande,
+  Fermeture,
+  Lead,
+  Plage,
+  Planning,
+  Rapport,
+  ReponsePaginee,
+  Site,
+  SiteCree,
+} from "../types.ts";
 
 type Options = Pick<OptionsAppel, "token" | "fetchImpl" | "baseUrl">;
 
@@ -71,6 +81,43 @@ export function repondreDemande(
     ...options,
     method: "PATCH",
     corps: { statut, reponse: reponse.trim() || undefined },
+  });
+}
+
+// --- Planning de réservation (projet 9 v2) ---------------------------------------
+export function obtenirPlanning(siteId: number, options: Options = {}) {
+  return appelApi<Planning>(`/planning/${siteId}`, options);
+}
+
+/** Remplace TOUTES les plages du site (l'éditeur envoie son état complet). */
+export function enregistrerPlanning(
+  siteId: number,
+  donnees: { plages: Plage[]; blocageMinutes?: number },
+  options: Options = {}
+) {
+  return appelApi<{ message: string; nbPlages: number }>(`/planning/${siteId}`, {
+    ...options,
+    method: "PUT",
+    corps: donnees,
+  });
+}
+
+export function ajouterFermeture(
+  siteId: number,
+  fermeture: { jour: string; motif?: string },
+  options: Options = {}
+) {
+  return appelApi<Fermeture>(`/planning/${siteId}/fermetures`, {
+    ...options,
+    method: "POST",
+    corps: fermeture,
+  });
+}
+
+export function supprimerFermeture(siteId: number, fermetureId: number, options: Options = {}) {
+  return appelApi<{ message: string }>(`/planning/${siteId}/fermetures/${fermetureId}`, {
+    ...options,
+    method: "DELETE",
   });
 }
 

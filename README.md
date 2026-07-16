@@ -2,7 +2,7 @@
 
 Projet 8 de la roadmap. Deux choses en une :
 
-1. **Le dashboard de l'agence** : tes leads (paginés, recherche, filtre par site, lu/non-lu) et tes sites clients (création avec clé API affichée une seule fois, régénération, désactivation) — fini les curl.
+1. **Le dashboard de l'agence** : tes leads (paginés, recherche, filtre par site, lu/non-lu), tes demandes de réservation (confirmer/refuser → email au client), le planning de créneaux de chaque site (plages hebdo, capacité, fermetures, délai de blocage — projet 9 v2), le suivi de présence locale (projet 10) et tes sites clients (création avec clé API affichée une seule fois, régénération, désactivation) — fini les curl.
 2. **Un boilerplate d'admin réutilisable** : auth JWT + session, client API typé et testé, React Query pour la donnée serveur, Zustand pour les toasts, hook useDebounce. Le squelette de tout futur SaaS (P9, P10...).
 
 Stack identique à ton projet-4 (React 19, TypeScript, Vite, React Query, Zustand) — aucune brique nouvelle à apprendre.
@@ -26,7 +26,7 @@ Prérequis : le backend (projet 7) doit tourner — `3-demarrer.bat` dans son do
 | `src/store/useToastStore.ts` | Notifications globales sans props — `toast("message", "succes"/"erreur")` appelable partout, même hors composants. |
 | `src/hooks/useDebounce.ts` | Le hook de l'exercice D1 du cahier, en version de référence. |
 
-`npm test` = 12 tests `node:test` sur le client API (aucun framework de test à installer). Les vues React, elles, se valident visuellement + par le type-check et le build.
+`npm test` = 20 tests `node:test` sur le client API (aucun framework de test à installer). Les vues React, elles, se valident visuellement + par le type-check et le build.
 
 ## Choix assumés
 

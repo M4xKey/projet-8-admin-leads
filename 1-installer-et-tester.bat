@@ -5,7 +5,7 @@ echo === Installation des dependances ===
 call npm install
 if errorlevel 1 goto erreur
 echo.
-echo === Tests du client API (12 attendus) ===
+echo === Tests du client API (20 attendus) ===
 call npm test
 if errorlevel 1 goto erreur
 echo.

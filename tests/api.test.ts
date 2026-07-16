@@ -169,3 +169,45 @@ test("releverAvis : POST /stats/avis/:id avec note et nbAvis", async () => {
   assert.equal(appels[0].url, "http://api.test/stats/avis/4");
   assert.equal(appels[0].init.body, JSON.stringify({ note: 4.8, nbAvis: 45 }));
 });
+
+// ============================== planning (projet 9 v2) ==========================
+test("obtenirPlanning : GET /planning/:siteId", async () => {
+  const { impl, appels } = fauxFetch(200, {
+    site: { id: 1, nom: "Chalet", blocageMinutes: 1440 },
+    plages: [],
+    fermetures: [],
+  });
+  const { obtenirPlanning } = await import("../src/api/endpoints.ts");
+  await obtenirPlanning(1, { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[0].url, "http://api.test/planning/1");
+});
+
+test("enregistrerPlanning : PUT avec les plages et le délai de blocage", async () => {
+  const { impl, appels } = fauxFetch(200, { message: "Planning enregistré", nbPlages: 1 });
+  const { enregistrerPlanning } = await import("../src/api/endpoints.ts");
+  const plage = {
+    jourSemaine: 4,
+    heureDebut: "12:00",
+    heureFin: "14:00",
+    pasMinutes: 30,
+    capacite: 20,
+    mode: "restaurant" as const,
+    libelle: "Déjeuner",
+  };
+  await enregistrerPlanning(1, { plages: [plage], blocageMinutes: 720 }, { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[0].url, "http://api.test/planning/1");
+  assert.equal(appels[0].init.method, "PUT");
+  assert.equal(appels[0].init.body, JSON.stringify({ plages: [plage], blocageMinutes: 720 }));
+});
+
+test("ajouterFermeture / supprimerFermeture : POST puis DELETE", async () => {
+  const { impl, appels } = fauxFetch(201, { id: 9, jour: "2026-08-15", motif: null });
+  const { ajouterFermeture, supprimerFermeture } = await import("../src/api/endpoints.ts");
+  await ajouterFermeture(1, { jour: "2026-08-15" }, { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[0].url, "http://api.test/planning/1/fermetures");
+  assert.equal(appels[0].init.method, "POST");
+
+  await supprimerFermeture(1, 9, { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[1].url, "http://api.test/planning/1/fermetures/9");
+  assert.equal(appels[1].init.method, "DELETE");
+});

@@ -27,7 +27,7 @@ export class ErreurApi extends Error {
 }
 
 export interface OptionsAppel {
-  method?: "GET" | "POST" | "PATCH" | "DELETE";
+  method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
   corps?: unknown;
   token?: string | null;
   fetchImpl?: typeof fetch;

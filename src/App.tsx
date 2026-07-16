@@ -7,10 +7,11 @@ import Login from "./components/Login.tsx";
 import LeadsView from "./components/LeadsView.tsx";
 import SitesView from "./components/SitesView.tsx";
 import DemandesView from "./components/DemandesView.tsx";
+import PlanningView from "./components/PlanningView.tsx";
 import SuiviView from "./components/SuiviView.tsx";
 import Toasts from "./components/Toasts.tsx";
 
-type Vue = "leads" | "demandes" | "suivi" | "sites";
+type Vue = "leads" | "demandes" | "planning" | "suivi" | "sites";
 
 function App() {
   const { user, logout } = useAuth();
@@ -47,6 +48,13 @@ function App() {
             </button>
             <button
               type="button"
+              className={vue === "planning" ? "actif" : ""}
+              onClick={() => setVue("planning")}
+            >
+              Planning
+            </button>
+            <button
+              type="button"
               className={vue === "suivi" ? "actif" : ""}
               onClick={() => setVue("suivi")}
             >
@@ -74,6 +82,8 @@ function App() {
           <LeadsView />
         ) : vue === "demandes" ? (
           <DemandesView />
+        ) : vue === "planning" ? (
+          <PlanningView />
         ) : vue === "suivi" ? (
           <SuiviView />
         ) : (

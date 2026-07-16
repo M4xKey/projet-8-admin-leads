@@ -17,7 +17,8 @@ const LIBELLES_STATUT: Record<Demande["statutEffectif"], string> = {
 
 function formaterQuand(demande: Demande): string {
   const debut = new Date(demande.dateDebut);
-  if (demande.type === "restaurant") {
+  if (demande.type !== "hebergement") {
+    // restaurant et rdv : une date + heure précise (le créneau choisi)
     return debut.toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" });
   }
   const fin = demande.dateFin ? new Date(demande.dateFin) : null;
@@ -95,7 +96,9 @@ function DemandesView() {
                     {LIBELLES_STATUT[demande.statutEffectif]}
                   </span>
                   <strong>{demande.nom}</strong>
-                  <span className="badge">{demande.type === "hebergement" ? "🛏 Séjour" : "🍽 Table"}</span>
+                  <span className="badge">
+                    {demande.type === "hebergement" ? "🛏 Séjour" : demande.type === "rdv" ? "📅 RDV" : "🍽 Table"}
+                  </span>
                   <span>{formaterQuand(demande)}</span>
                   <span>{demande.nbPersonnes} pers.</span>
                   <span className="badge">{demande.site.nom}</span>
