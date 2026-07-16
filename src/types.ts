@@ -33,6 +33,40 @@ export interface Lead {
   site: { id: number; nom: string };
 }
 
+/** Une demande de réservation reçue via le widget (projet 9). */
+export interface Demande {
+  id: number;
+  type: "hebergement" | "restaurant";
+  statut: "en_attente" | "confirmee" | "refusee";
+  /** Statut calculé par le backend : ajoute "expiree" si en attente et date passée. */
+  statutEffectif: "en_attente" | "confirmee" | "refusee" | "expiree";
+  nom: string;
+  email: string;
+  telephone: string | null;
+  message: string | null;
+  dateDebut: string;
+  dateFin: string | null;
+  nbPersonnes: number;
+  reponse: string | null;
+  createdAt: string;
+  site: { id: number; nom: string };
+}
+
+/** Rapport mensuel de présence locale (projet 10). */
+export interface Rapport {
+  site: { id: number; nom: string; domaine: string };
+  mois: string; // "YYYY-MM"
+  stats: {
+    totalVues: number;
+    joursAvecVisites: number;
+    meilleurJour: { jour: string; compteur: number } | null;
+    nbLeads: number;
+    nbDemandes: number;
+    avis: { note: number; nbAvis: number; nouveauxAvis: number | null } | null;
+  };
+  vues: { jour: string; compteur: number }[];
+}
+
 /** Enveloppe standard des listes paginées du backend (lib pagination). */
 export interface ReponsePaginee<T> {
   donnees: T[];

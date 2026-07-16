@@ -6,9 +6,11 @@ import { useAuth } from "./context/AuthContext.tsx";
 import Login from "./components/Login.tsx";
 import LeadsView from "./components/LeadsView.tsx";
 import SitesView from "./components/SitesView.tsx";
+import DemandesView from "./components/DemandesView.tsx";
+import SuiviView from "./components/SuiviView.tsx";
 import Toasts from "./components/Toasts.tsx";
 
-type Vue = "leads" | "sites";
+type Vue = "leads" | "demandes" | "suivi" | "sites";
 
 function App() {
   const { user, logout } = useAuth();
@@ -38,6 +40,20 @@ function App() {
             </button>
             <button
               type="button"
+              className={vue === "demandes" ? "actif" : ""}
+              onClick={() => setVue("demandes")}
+            >
+              Demandes
+            </button>
+            <button
+              type="button"
+              className={vue === "suivi" ? "actif" : ""}
+              onClick={() => setVue("suivi")}
+            >
+              Suivi
+            </button>
+            <button
+              type="button"
               className={vue === "sites" ? "actif" : ""}
               onClick={() => setVue("sites")}
             >
@@ -54,7 +70,15 @@ function App() {
       </header>
 
       <main className="app-contenu">
-        {vue === "leads" ? <LeadsView /> : <SitesView />}
+        {vue === "leads" ? (
+          <LeadsView />
+        ) : vue === "demandes" ? (
+          <DemandesView />
+        ) : vue === "suivi" ? (
+          <SuiviView />
+        ) : (
+          <SitesView />
+        )}
       </main>
 
       <Toasts />

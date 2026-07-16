@@ -125,3 +125,47 @@ test("marquerLu : PATCH /leads/:id avec { lu }", async () => {
   assert.equal(appels[0].init.method, "PATCH");
   assert.equal(appels[0].init.body, JSON.stringify({ lu: true }));
 });
+
+// ============================== demandes (projet 9) ===========================
+test("listerDemandes : filtre statut dans la query", async () => {
+  const { impl, appels } = fauxFetch(200, { donnees: [], page: 1, limit: 20, total: 0, totalPages: 1 });
+  const { listerDemandes } = await import("../src/api/endpoints.ts");
+  await listerDemandes({ page: 1, statut: "en_attente" }, { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[0].url, "http://api.test/demandes?page=1&statut=en_attente");
+});
+
+test("repondreDemande : PATCH avec statut, message optionnel omis si vide", async () => {
+  const { impl, appels } = fauxFetch(200, { id: 3, statut: "confirmee" });
+  const { repondreDemande } = await import("../src/api/endpoints.ts");
+  await repondreDemande(3, "confirmee", "  ", { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[0].url, "http://api.test/demandes/3");
+  assert.equal(appels[0].init.body, JSON.stringify({ statut: "confirmee" }));
+
+  await repondreDemande(3, "refusee", "Complet ce soir-là", { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[1].init.body, JSON.stringify({ statut: "refusee", reponse: "Complet ce soir-là" }));
+});
+
+// ============================== suivi (projet 10) =============================
+test("obtenirRapport : GET /stats/rapport/:id avec mois", async () => {
+  const { impl, appels } = fauxFetch(200, { site: { id: 1 }, mois: "2026-07", stats: {}, vues: [] });
+  const { obtenirRapport } = await import("../src/api/endpoints.ts");
+  await obtenirRapport(4, "2026-07", { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[0].url, "http://api.test/stats/rapport/4?mois=2026-07");
+});
+
+test("envoyerRapport : POST /stats/rapport/:id/envoyer", async () => {
+  const { impl, appels } = fauxFetch(200, { envoye: true, mode: "console", destinataire: "x@y.fr", mois: "2026-07" });
+  const { envoyerRapport } = await import("../src/api/endpoints.ts");
+  const r = await envoyerRapport(4, "2026-07", { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[0].url, "http://api.test/stats/rapport/4/envoyer?mois=2026-07");
+  assert.equal(appels[0].init.method, "POST");
+  assert.equal(r.mode, "console");
+});
+
+test("releverAvis : POST /stats/avis/:id avec note et nbAvis", async () => {
+  const { impl, appels } = fauxFetch(201, { id: 9 });
+  const { releverAvis } = await import("../src/api/endpoints.ts");
+  await releverAvis(4, { note: 4.8, nbAvis: 45 }, { ...BASE, fetchImpl: impl, token: "t" });
+  assert.equal(appels[0].url, "http://api.test/stats/avis/4");
+  assert.equal(appels[0].init.body, JSON.stringify({ note: 4.8, nbAvis: 45 }));
+});
